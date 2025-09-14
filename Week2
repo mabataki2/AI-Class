@@ -1,0 +1,159 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "mount_file_id": "1i49LFQs_6-lPQ2OEJzNP0oMDHwDcaFrx",
+      "authorship_tag": "ABX9TyP6esX7ulV/N0bi1EMO3BE7",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/mabataki2/AI-Class/blob/main/Week2\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Iris.data\n",
+        "import pandas as pd\n",
+        "\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "\n",
+        "from sklearn.tree import DecisionTreeClassifier\n",
+        "\n",
+        "from sklearn.ensemble import RandomForestClassifier\n",
+        "\n",
+        "from sklearn.linear_model import LogisticRegression\n",
+        "\n",
+        "from sklearn.metrics import accuracy_score\n",
+        "\n",
+        "\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "# 1) 데이터 준비\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "cols = [\"sepal_length\", \"sepal_width\", \"petal_length\", \"petal_width\", \"label\"] # 칼럼명 지정. 불러들이고나서 줘도 됨.\n",
+        "\n",
+        "df = pd.read_csv(\"/content/drive/MyDrive/iris.data\", header=None, names=cols).dropna() # DL의 가장 큰 점은 feature를 사람이 정하느냐, ...\n",
+        "\n",
+        "\n",
+        "\n",
+        "X = df.drop(columns=[\"label\"])\n",
+        "\n",
+        "y = df[\"label\"]\n",
+        "\n",
+        "\n",
+        "\n",
+        "X_train, X_test, y_train, y_test = train_test_split(  # test, train중 어디에 데이터를 많이 줘야 할까? Train, 보통 7대3, 8대2로 나눔..\n",
+        "\n",
+        "    X, y, test_size=0.2, stratify=y, random_state=42 # 테스트 크기가 0.2  즉 0.8은 트레인에 쓰임. 데이터를 받으면 무조건 4개로 구분함.\n",
+        "\n",
+        ")\n",
+        "\n",
+        "\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "# 2) 모델 구성\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "dt = DecisionTreeClassifier(random_state=42) #modelbuilt , 그대로 쓰면 됨. dt는 맘대로 변수 잡기.\n",
+        "\n",
+        "rf = RandomForestClassifier(n_estimators=200, random_state=42) #모델을 세가지 만든거임.\n",
+        "\n",
+        "lr = LogisticRegression(max_iter=500)\n",
+        "\n",
+        "\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "# 3) 모델 학습\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "dt.fit(X_train, y_train) # 만든거에 fit해서 학습시키는거임. 패턴\n",
+        "\n",
+        "rf.fit(X_train, y_train)\n",
+        "\n",
+        "lr.fit(X_train, y_train)\n",
+        "\n",
+        "\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "# 4) 모델 평가\n",
+        "\n",
+        "# -----------------------------\n",
+        "\n",
+        "#y_predict = dt.predict(X_test) 로 해도 됨.\n",
+        "dt_acc = accuracy_score(y_test, dt.predict(X_test)) #실제 정답 값.\n",
+        "\n",
+        "rf_acc = accuracy_score(y_test, rf.predict(X_test))\n",
+        "\n",
+        "lr_acc = accuracy_score(y_test, lr.predict(X_test))\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "print(\"=== Test Accuracy ===\")\n",
+        "\n",
+        "print(f\"Decision Tree : {dt_acc:.4f}\")\n",
+        "\n",
+        "print(f\"Random Forest : {rf_acc:.4f}\")\n",
+        "\n",
+        "print(f\"Logistic Reg. : {lr_acc:.4f}\")\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "9kHqDD9uC_9F",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "b3d1992b-c9b4-431b-8069-40f3b06b3f87"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "=== Test Accuracy ===\n",
+            "Decision Tree : 0.9333\n",
+            "Random Forest : 0.9000\n",
+            "Logistic Reg. : 0.9667\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "uYILIE4rNvlG"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
