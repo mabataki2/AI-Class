@@ -1,0 +1,112 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "mount_file_id": "1i49LFQs_6-lPQ2OEJzNP0oMDHwDcaFrx",
+      "authorship_tag": "ABX9TyOyv0S8+WeOdlVeZck/SUFB",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/mabataki2/AI-Class/blob/main/Week2/diabetes(Regression)\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# diabetes (Regressor)\n",
+        "import pandas as pd\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.tree import DecisionTreeRegressor\n",
+        "from sklearn.ensemble import RandomForestRegressor\n",
+        "from sklearn.linear_model import LinearRegression\n",
+        "from sklearn.metrics import mean_squared_error\n",
+        "\n",
+        "# -----------------------------\n",
+        "# 1) 데이터 준비\n",
+        "# -----------------------------\n",
+        "df_diabetes_reg = pd.read_csv(\"/content/drive/MyDrive/diabetes.csv\")\n",
+        "\n",
+        "\n",
+        "X_diabetes_reg = df_diabetes_reg.drop(columns=[\"BMI\", \"Outcome\"])\n",
+        "y_diabetes_reg = df_diabetes_reg[\"BMI\"]\n",
+        "\n",
+        "X_train_diab_reg, X_test_diab_reg, y_train_diab_reg, y_test_diab_reg = train_test_split(\n",
+        "    X_diabetes_reg, y_diabetes_reg, test_size=0.2, random_state=42\n",
+        ")\n",
+        "\n",
+        "# -----------------------------\n",
+        "# 2) 모델 구성\n",
+        "# -----------------------------\n",
+        "dt_diab_reg = DecisionTreeRegressor(random_state=42)\n",
+        "rf_diab_reg = RandomForestRegressor(n_estimators=200, random_state=42)\n",
+        "lr_diab_reg = LinearRegression()\n",
+        "\n",
+        "# -----------------------------\n",
+        "# 3) 모델 학습\n",
+        "# -----------------------------\n",
+        "dt_diab_reg.fit(X_train_diab_reg, y_train_diab_reg)\n",
+        "rf_diab_reg.fit(X_train_diab_reg, y_train_diab_reg)\n",
+        "lr_diab_reg.fit(X_train_diab_reg, y_train_diab_reg)\n",
+        "\n",
+        "# -----------------------------\n",
+        "# 4) 모델 평가\n",
+        "# -----------------------------\n",
+        "dt_mse_diab_reg = mean_squared_error(y_test_diab_reg, dt_diab_reg.predict(X_test_diab_reg))\n",
+        "rf_mse_diab_reg = mean_squared_error(y_test_diab_reg, rf_diab_reg.predict(X_test_diab_reg))\n",
+        "lr_mse_diab_reg = mean_squared_error(y_test_diab_reg, lr_diab_reg.predict(X_test_diab_reg))\n",
+        "\n",
+        "print(\"\\n=== Test MSE (Diabetes Regressor) ===\")\n",
+        "print(f\"Decision Tree : {dt_mse_diab_reg:.4f}\")\n",
+        "print(f\"Random Forest : {rf_mse_diab_reg:.4f}\")\n",
+        "print(f\"Linear Regression : {lr_mse_diab_reg:.4f}\")"
+      ],
+      "metadata": {
+        "id": "9kHqDD9uC_9F",
+        "outputId": "be45142b-a1b1-4860-9739-65bad6cc804a",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "=== Test MSE (Diabetes Regressor) ===\n",
+            "Decision Tree : 104.1275\n",
+            "Random Forest : 46.7562\n",
+            "Linear Regression : 52.2406\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "uYILIE4rNvlG"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
