@@ -1,0 +1,261 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "gpuType": "T4",
+      "mount_file_id": "1uazI2FvNwSGqBMdPf3jLz-WgJCz8NjtT",
+      "authorship_tag": "ABX9TyOrOZQ/Ya3hv2HbEi78tQzQ",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    },
+    "accelerator": "GPU"
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/mabataki2/AI-Class/blob/main/Week7/MNIST_CNN\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Fashion MNIST - CNN"
+      ],
+      "metadata": {
+        "id": "GhdK0AgUVVrv"
+      },
+      "execution_count": 10,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import tensorflow as tf\n",
+        "import numpy as np\n",
+        "from tensorflow.keras import layers, models"
+      ],
+      "metadata": {
+        "id": "BvfVB-tI38Pg"
+      },
+      "execution_count": 11,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 1️⃣ 데이터 로드\n",
+        "fashion_mnist = tf.keras.datasets.fashion_mnist\n",
+        "(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()"
+      ],
+      "metadata": {
+        "id": "9dO7UwiR3_YZ"
+      },
+      "execution_count": 12,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 2️⃣ 정규화\n",
+        "x_train = x_train / 255.0\n",
+        "x_test = x_test / 255.0"
+      ],
+      "metadata": {
+        "id": "cOvpBFko4Ame"
+      },
+      "execution_count": 13,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 3️⃣ 채널 차원 추가 (np.expand_dims 이용)\n",
+        "x_train = np.expand_dims(x_train, -1)\n",
+        "x_test = np.expand_dims(x_test, -1)\n",
+        "\n",
+        "print(\"x_train shape:\", x_train.shape)  # (60000, 28, 28, 1)\n",
+        "print(\"x_test shape:\", x_test.shape)    # (10000, 28, 28, 1"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "5SoVF4mC4BOL",
+        "outputId": "f13828e9-3b7f-4fc4-bb07-8e01bfb74519"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "x_train shape: (60000, 28, 28, 1)\n",
+            "x_test shape: (10000, 28, 28, 1)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 4️⃣ CNN 모델 구성\n",
+        "model = models.Sequential([\n",
+        "    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),\n",
+        "    layers.MaxPooling2D((2, 2)),\n",
+        "    layers.Conv2D(64, (3, 3), activation='relu'),\n",
+        "    layers.MaxPooling2D((2, 2)),\n",
+        "    layers.Conv2D(128, (3, 3), activation='relu'),\n",
+        "    layers.Flatten(),\n",
+        "    layers.Dropout(0.4),\n",
+        "    layers.Dense(128, activation='relu'),\n",
+        "    layers.Dense(10, activation='softmax')\n",
+        "])\n"
+      ],
+      "metadata": {
+        "id": "urTpD5dh4PR2"
+      },
+      "execution_count": 16,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 5️⃣ 컴파일\n",
+        "model.compile(optimizer='adam',\n",
+        "              loss='sparse_categorical_crossentropy',\n",
+        "              metrics=['accuracy'])"
+      ],
+      "metadata": {
+        "id": "nKCXSdhp4Vzz"
+      },
+      "execution_count": 17,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 6️⃣ 학습\n",
+        "history = model.fit(\n",
+        "    x_train, y_train,\n",
+        "    epochs=10,\n",
+        "    batch_size=128,\n",
+        "    validation_split=0.1,\n",
+        "    verbose=2\n",
+        ")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "PCcJjG9z4Yw8",
+        "outputId": "212fe864-0dd4-44e7-afb5-4827bbb9aa3d"
+      },
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 1/10\n",
+            "422/422 - 10s - 23ms/step - accuracy: 0.7779 - loss: 0.6037 - val_accuracy: 0.8570 - val_loss: 0.3914\n",
+            "Epoch 2/10\n",
+            "422/422 - 2s - 4ms/step - accuracy: 0.8614 - loss: 0.3782 - val_accuracy: 0.8780 - val_loss: 0.3341\n",
+            "Epoch 3/10\n",
+            "422/422 - 2s - 4ms/step - accuracy: 0.8814 - loss: 0.3259 - val_accuracy: 0.8890 - val_loss: 0.3002\n",
+            "Epoch 4/10\n",
+            "422/422 - 2s - 5ms/step - accuracy: 0.8910 - loss: 0.2955 - val_accuracy: 0.8997 - val_loss: 0.2779\n",
+            "Epoch 5/10\n",
+            "422/422 - 2s - 5ms/step - accuracy: 0.9000 - loss: 0.2715 - val_accuracy: 0.9005 - val_loss: 0.2699\n",
+            "Epoch 6/10\n",
+            "422/422 - 2s - 5ms/step - accuracy: 0.9069 - loss: 0.2524 - val_accuracy: 0.9093 - val_loss: 0.2521\n",
+            "Epoch 7/10\n",
+            "422/422 - 2s - 4ms/step - accuracy: 0.9124 - loss: 0.2363 - val_accuracy: 0.9103 - val_loss: 0.2414\n",
+            "Epoch 8/10\n",
+            "422/422 - 2s - 4ms/step - accuracy: 0.9169 - loss: 0.2251 - val_accuracy: 0.9143 - val_loss: 0.2347\n",
+            "Epoch 9/10\n",
+            "422/422 - 2s - 4ms/step - accuracy: 0.9215 - loss: 0.2128 - val_accuracy: 0.9163 - val_loss: 0.2337\n",
+            "Epoch 10/10\n",
+            "422/422 - 2s - 4ms/step - accuracy: 0.9249 - loss: 0.2002 - val_accuracy: 0.9138 - val_loss: 0.2353\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 7️⃣ 평가\n",
+        "test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)\n",
+        "print(f\"\\n✅ Test Accuracy: {test_acc:.4f}\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "EhwqA86Z4aKg",
+        "outputId": "78fab12e-c9b4-4aba-afe5-58d8ff09387f"
+      },
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "313/313 - 2s - 6ms/step - accuracy: 0.9142 - loss: 0.2423\n",
+            "\n",
+            "✅ Test Accuracy: 0.9142\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 8️⃣ 예측 예시\n",
+        "predictions = model.predict(x_test[:5])\n",
+        "print(\"예측 결과:\", np.argmax(predictions, axis=1))\n",
+        "print(\"실제 레이블:\", y_test[:5])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "sif1eeD64iVp",
+        "outputId": "6cdae299-1344-4b52-d096-7da5d5b89547"
+      },
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[1m1/1\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 493ms/step\n",
+            "예측 결과: [9 2 1 1 6]\n",
+            "실제 레이블: [9 2 1 1 6]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "K1K-kdl24jFk"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
